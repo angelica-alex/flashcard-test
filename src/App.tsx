@@ -17,29 +17,34 @@ export default function FlashCardApp() {
 
   const handleAddCard = () => setCards([...cards, { front: '', back: '' }]);
 
-  const handleGenerateLink = () => {
+  // Кодирование карточек в ссылку
+const handleGenerateLink = () => {
   const validCards = cards.filter(c => c.front && c.back);
   if (!validCards.length) {
     alert('Заполните хотя бы одну карточку полностью!');
     return;
   }
 
-  const encoded = btoa(JSON.stringify(validCards));
+  // Преобразуем JSON в base64 с поддержкой юникода
+  const json = JSON.stringify(validCards);
+  const encoded = btoa(unescape(encodeURIComponent(json)));
   const link = `${window.location.origin}?cards=${encoded}`;
   setGeneratedLink(link);
 };
 
-  const handleLoadEmbed = () => {
-    const params = new URLSearchParams(window.location.search);
-    const encoded = params.get('cards');
-    if (!encoded) return;
-    try {
-      const decoded = JSON.parse(atob(encoded));
-      setEmbedCards(decoded);
-    } catch (err) {
-      console.error('Ошибка декодирования карточек', err);
-    }
-  };
+// Декодирование карточек из ссылки
+const handleLoadEmbed = () => {
+  const params = new URLSearchParams(window.location.search);
+  const encoded = params.get('cards');
+  if (!encoded) return;
+  try {
+    // Декодируем base64 с юникодом
+    const decoded = JSON.parse(decodeURIComponent(escape(atob(encoded))));
+    setEmbedCards(decoded);
+  } catch (err) {
+    console.error('Ошибка декодирования карточек', err);
+  }
+};
 
   const handleFlip = () => setFlipped(!flipped);
   const handleNext = () => {
