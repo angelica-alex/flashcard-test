@@ -18,13 +18,16 @@ export default function FlashCardApp() {
   const handleAddCard = () => setCards([...cards, { front: '', back: '' }]);
 
   const handleGenerateLink = () => {
-    const validCards = cards.filter(c => c.front && c.back);
-    if (!validCards.length) return;
+  const validCards = cards.filter(c => c.front && c.back);
+  if (!validCards.length) {
+    alert('Заполните хотя бы одну карточку полностью!');
+    return;
+  }
 
-    const encoded = btoa(JSON.stringify(validCards));
-    const link = `${window.location.origin}?cards=${encoded}`;
-    setGeneratedLink(link);
-  };
+  const encoded = btoa(JSON.stringify(validCards));
+  const link = `${window.location.origin}?cards=${encoded}`;
+  setGeneratedLink(link);
+};
 
   const handleLoadEmbed = () => {
     const params = new URLSearchParams(window.location.search);
